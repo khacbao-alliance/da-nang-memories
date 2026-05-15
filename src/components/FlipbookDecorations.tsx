@@ -82,72 +82,7 @@ export default function FlipbookDecorations() {
           🪁
         </motion.div>
 
-        {/* ── Sea horizon ── */}
-        <div className="absolute top-[60%] left-0 right-0 h-[16%] bg-gradient-to-b from-cyan-200/40 via-sky-300/45 to-blue-400/40 overflow-hidden">
-          {/* shimmer lines */}
-          <motion.div
-            className="absolute top-[30%] left-0 right-0 h-px bg-white/40"
-            animate={{ opacity: [0.2, 0.6, 0.2] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.div
-            className="absolute top-[55%] left-0 right-0 h-px bg-white/30"
-            animate={{ opacity: [0.4, 0.1, 0.4] }}
-            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          />
-        </div>
-
-        {/* Boat sailing across the sea */}
-        <motion.div
-          className="absolute top-[59%] text-2xl"
-          initial={{ x: -30 }}
-          animate={{ x: [0, 200, 0] }}
-          transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <motion.span
-            className="inline-block"
-            animate={{ rotate: [-3, 3, -3], y: [0, -1, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-          >
-            ⛵
-          </motion.span>
-        </motion.div>
-
-        {/* Small speedboat going the other way */}
-        <motion.div
-          className="absolute top-[68%] text-lg"
-          animate={{ x: [180, -20, 180] }}
-          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", delay: 5 }}
-        >
-          🚤
-        </motion.div>
-
-        {/* Dolphin jumping out of water */}
-        <motion.div
-          className="absolute top-[64%] left-8 text-2xl"
-          animate={{ y: [0, -28, 0], rotate: [0, -25, 0] }}
-          transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut", repeatDelay: 2 }}
-        >
-          🐬
-        </motion.div>
-
-        {/* Wave splash */}
-        <motion.div
-          className="absolute top-[68%] left-6 text-base"
-          animate={{ opacity: [0, 0.8, 0], scale: [0.6, 1.1, 0.6] }}
-          transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut", repeatDelay: 2, delay: 0.2 }}
-        >
-          🌊
-        </motion.div>
-
-        {/* Flamingo float drifting */}
-        <motion.div
-          className="absolute top-[72%] right-4 text-xl"
-          animate={{ x: [0, -8, 0], rotate: [-4, 4, -4] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        >
-          🦩
-        </motion.div>
+        {/* (Sea moved out to its own dedicated zone between beach and dev team) */}
 
         {/* Palm trees swaying */}
         <motion.div
@@ -218,6 +153,106 @@ export default function FlipbookDecorations() {
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         >
           <span className="text-xs font-semibold text-amber-700 whitespace-nowrap">🏝️ Đà Nẵng</span>
+        </motion.div>
+      </div>
+
+      {/* ─────────── MIDDLE — Sea (1.5× beach width, right next to it) ─────────── */}
+      <div className="absolute bottom-0 left-[200px] xl:left-[260px] w-[270px] xl:w-[330px] h-[22%]">
+
+        {/* Sea gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-cyan-200/35 via-sky-300/45 to-blue-500/50 rounded-t-2xl overflow-hidden">
+          {/* Shimmer lines */}
+          <motion.div
+            className="absolute top-[18%] left-0 right-0 h-px bg-white/40"
+            animate={{ opacity: [0.2, 0.6, 0.2] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute top-[42%] left-0 right-0 h-px bg-white/30"
+            animate={{ opacity: [0.4, 0.1, 0.4] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          />
+          <motion.div
+            className="absolute top-[68%] left-0 right-0 h-px bg-white/25"
+            animate={{ opacity: [0.1, 0.4, 0.1] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+          />
+        </div>
+
+        {/* Boat sailing left → right across the sea */}
+        <motion.div
+          className="absolute top-[16%] left-2 text-3xl"
+          animate={{ x: [0, 200, 0] }}
+          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <motion.span
+            className="inline-block"
+            animate={{ rotate: [-3, 3, -3], y: [0, -2, 0] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          >
+            ⛵
+          </motion.span>
+        </motion.div>
+
+        {/* Speedboat going the other way */}
+        <motion.div
+          className="absolute top-[48%] right-4 text-2xl"
+          animate={{ x: [0, -180, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 5 }}
+        >
+          🚤
+        </motion.div>
+
+        {/* Dolphin jumping out — first spot */}
+        <motion.div
+          className="absolute top-[40%] left-[30%] text-3xl"
+          animate={{ y: [0, -28, 0], rotate: [0, -25, 0] }}
+          transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut", repeatDelay: 3 }}
+        >
+          🐬
+        </motion.div>
+        <motion.div
+          className="absolute top-[60%] left-[28%] text-lg"
+          animate={{ opacity: [0, 0.8, 0], scale: [0.6, 1.2, 0.6] }}
+          transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut", repeatDelay: 3, delay: 0.25 }}
+        >
+          🌊
+        </motion.div>
+
+        {/* Second dolphin elsewhere */}
+        <motion.div
+          className="absolute top-[36%] left-[65%] text-2xl"
+          animate={{ y: [0, -22, 0], rotate: [0, 20, 0] }}
+          transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut", repeatDelay: 4, delay: 1.5 }}
+        >
+          🐬
+        </motion.div>
+
+        {/* Fish poking out */}
+        <motion.div
+          className="absolute top-[68%] left-[48%] text-base"
+          animate={{ y: [0, -10, 0], opacity: [0.4, 1, 0.4], rotate: [-10, 10, -10] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        >
+          🐟
+        </motion.div>
+
+        {/* Flamingo float drifting near right shore */}
+        <motion.div
+          className="absolute top-[70%] right-6 text-2xl"
+          animate={{ x: [0, -14, 0], rotate: [-4, 4, -4] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        >
+          🦩
+        </motion.div>
+
+        {/* Distant tiny sailboat on horizon */}
+        <motion.div
+          className="absolute top-[6%] left-[40%] text-xs opacity-70"
+          animate={{ x: [0, -80, 0] }}
+          transition={{ duration: 32, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        >
+          ⛵
         </motion.div>
       </div>
 
