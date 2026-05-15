@@ -77,9 +77,9 @@ export default function FullscreenPreview({
           {hasPrev && (
             <button
               onClick={(e) => { e.stopPropagation(); onPrev(); }}
-              className="absolute left-5 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass flex items-center justify-center text-white/60 hover:text-white transition-colors hover:scale-110"
+              className="absolute left-2 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full glass flex items-center justify-center text-white/60 hover:text-white transition-colors hover:scale-110 active:scale-95"
             >
-              <ChevronLeft size={22} />
+              <ChevronLeft size={20} />
             </button>
           )}
 
@@ -90,30 +90,30 @@ export default function FullscreenPreview({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.2 }}
-            className="relative flex flex-col items-center max-h-screen px-20 py-16"
+            className="relative flex flex-col items-center max-h-screen px-4 sm:px-20 py-10 sm:py-16"
             onClick={(e) => e.stopPropagation()}
           >
             {media.media_type === "image" ? (
               <img
                 src={media.cloudinary_url}
                 alt={media.caption || "Memory"}
-                className="max-h-[72vh] max-w-[80vw] object-contain rounded-xl shadow-2xl"
+                className="max-h-[65vh] sm:max-h-[72vh] max-w-[92vw] sm:max-w-[80vw] object-contain rounded-xl shadow-2xl"
               />
             ) : (
               <video
                 src={media.cloudinary_url}
                 controls
                 autoPlay
-                className="max-h-[72vh] max-w-[80vw] rounded-xl shadow-2xl"
+                className="max-h-[65vh] sm:max-h-[72vh] max-w-[92vw] sm:max-w-[80vw] rounded-xl shadow-2xl"
               />
             )}
 
             {/* Caption + meta */}
-            <div className="mt-5 text-center max-w-lg">
+            <div className="mt-4 sm:mt-5 text-center max-w-lg px-2">
               {media.caption && (
-                <p className="text-white text-base font-medium mb-2">{media.caption}</p>
+                <p className="text-white text-sm sm:text-base font-medium mb-2">{media.caption}</p>
               )}
-              <div className="flex items-center justify-center gap-3 text-white/60 text-sm">
+              <div className="flex items-center justify-center gap-3 text-white/60 text-xs sm:text-sm">
                 <span className="flex items-center gap-1">
                   <User size={12} />
                   {media.uploaded_by}
@@ -128,9 +128,9 @@ export default function FullscreenPreview({
           {hasNext && (
             <button
               onClick={(e) => { e.stopPropagation(); onNext(); }}
-              className="absolute right-5 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass flex items-center justify-center text-white/60 hover:text-white transition-colors hover:scale-110"
+              className="absolute right-2 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full glass flex items-center justify-center text-white/60 hover:text-white transition-colors hover:scale-110 active:scale-95"
             >
-              <ChevronRight size={22} />
+              <ChevronRight size={20} />
             </button>
           )}
         </motion.div>

@@ -147,7 +147,7 @@ export default function UploadModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 16 }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="bg-white border border-gray-100 rounded-2xl shadow-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto"
+            className="bg-white border border-gray-100 rounded-2xl shadow-2xl p-4 sm:p-6 w-full max-w-md max-h-[90svh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}

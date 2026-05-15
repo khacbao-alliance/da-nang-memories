@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -36,7 +36,6 @@ const PAGE_VARIANTS = {
 export default function FlipbookViewer({ media, isLoading, onOpenFullscreen }: Props) {
   const [[pageIdx, dir], setPage] = useState([0, 0]);
 
-  // Reset to page 0 when media (day) changes
   useEffect(() => {
     setPage([0, 0]);
   }, [media]);
@@ -52,7 +51,6 @@ export default function FlipbookViewer({ media, isLoading, onOpenFullscreen }: P
     [media.length]
   );
 
-  // Keyboard navigation
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") paginate(-1);
@@ -90,28 +88,27 @@ export default function FlipbookViewer({ media, isLoading, onOpenFullscreen }: P
 
       {/* ── Main card area ── */}
       <div
-        className="flex-1 flex items-center justify-center gap-4 px-4 sm:px-8 overflow-hidden py-4"
+        className="flex-1 flex items-center justify-center sm:gap-4 px-2 sm:px-8 overflow-hidden py-4"
         style={{ perspective: 1400 }}
       >
-        {/* Prev button */}
+        {/* Prev button — desktop only */}
         <button
           onClick={() => paginate(-1)}
           disabled={!hasPrev}
-          className="flex-shrink-0 w-11 h-11 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center text-gray-400 hover:text-gray-800 hover:shadow-lg hover:scale-105 disabled:opacity-20 transition-all duration-200"
+          className="hidden sm:flex flex-shrink-0 w-11 h-11 rounded-full bg-white border border-gray-200 shadow-md items-center justify-center text-gray-400 hover:text-gray-800 hover:shadow-lg hover:scale-105 disabled:opacity-20 transition-all duration-200"
         >
           <ChevronLeft size={20} />
         </button>
 
-        {/* Card wrapper — controls the size */}
+        {/* Card wrapper */}
         <div
-          className="relative flex-shrink-0"
+          className="relative flex-shrink-0 max-w-[calc(100vw-32px)] sm:max-w-[calc(100vw-136px)]"
           style={{
-            height: "min(calc(100vh - 160px), 680px)",
+            height: "min(calc(100svh - 180px), 680px)",
             aspectRatio: "3/4",
-            maxWidth: "calc(100vw - 136px)",
           }}
         >
-          {/* Stacked pages behind (depth effect) */}
+          {/* Stacked pages behind */}
           {hasNext && (
             <div
               className="absolute inset-0 rounded-2xl bg-gray-100 pointer-events-none"
@@ -170,15 +167,12 @@ export default function FlipbookViewer({ media, isLoading, onOpenFullscreen }: P
                   />
                 )}
 
-                {/* Book-spine left shadow */}
                 <div className="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-black/12 to-transparent pointer-events-none" />
 
-                {/* Page counter — top right */}
                 <div className="absolute top-3 right-3 bg-white/88 backdrop-blur-sm rounded-full px-2.5 py-1 text-xs font-semibold text-gray-600 shadow-sm">
                   {pageIdx + 1} / {media.length}
                 </div>
 
-                {/* Fullscreen icon — top left */}
                 <div className="absolute top-3 left-3 bg-white/88 backdrop-blur-sm rounded-full p-1.5 shadow-sm">
                   <Maximize2 size={11} className="text-gray-500" />
                 </div>
@@ -212,13 +206,31 @@ export default function FlipbookViewer({ media, isLoading, onOpenFullscreen }: P
               </div>
             </motion.div>
           </AnimatePresence>
+
+          {/* Mobile overlay nav arrows */}
+          {hasPrev && (
+            <button
+              onClick={() => paginate(-1)}
+              className="sm:hidden absolute left-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white active:scale-90 transition-transform"
+            >
+              <ChevronLeft size={18} />
+            </button>
+          )}
+          {hasNext && (
+            <button
+              onClick={() => paginate(1)}
+              className="sm:hidden absolute right-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white active:scale-90 transition-transform"
+            >
+              <ChevronRight size={18} />
+            </button>
+          )}
         </div>
 
-        {/* Next button */}
+        {/* Next button — desktop only */}
         <button
           onClick={() => paginate(1)}
           disabled={!hasNext}
-          className="flex-shrink-0 w-11 h-11 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center text-gray-400 hover:text-gray-800 hover:shadow-lg hover:scale-105 disabled:opacity-20 transition-all duration-200"
+          className="hidden sm:flex flex-shrink-0 w-11 h-11 rounded-full bg-white border border-gray-200 shadow-md items-center justify-center text-gray-400 hover:text-gray-800 hover:shadow-lg hover:scale-105 disabled:opacity-20 transition-all duration-200"
         >
           <ChevronRight size={20} />
         </button>
