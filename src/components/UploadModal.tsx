@@ -39,16 +39,17 @@ export default function UploadModal({
       previewUrl: URL.createObjectURL(file),
       type: file.type.startsWith("video/") ? ("video" as const) : ("image" as const),
     }));
-    setFiles((prev) => [...prev, ...previews].slice(0, 10));
+    setFiles((prev) => [...prev, ...previews].slice(0, 20));
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
+    multiple: true,
     accept: {
       "image/*": [".jpg", ".jpeg", ".png", ".gif", ".webp"],
       "video/*": [".mp4", ".mov", ".webm"],
     },
-    maxFiles: 10,
+    maxFiles: 20,
   });
 
   const removeFile = (i: number) => {
@@ -62,18 +63,51 @@ export default function UploadModal({
     if (!files.length || !uploaderName.trim()) return;
     setStatus("uploading");
     setProgress(0);
+
+    const fileSizes = files.map((f) => f.file.size);
+    const totalSize = fileSizes.reduce((a, b) => a + b, 0) || 1;
+    const uploadedPerFile = new Array(files.length).fill(0);
+
+    const updateProgress = () => {
+      const uploaded = uploadedPerFile.reduce((a: number, b: number) => a + b, 0);
+      setProgress(Math.min(99, Math.round((uploaded / totalSize) * 100)));
+    };
+
+    const uploadOne = (fp: FilePreview, index: number): Promise<void> =>
+      new Promise((resolve, reject) => {
+        const fd = new FormData();
+        fd.append("file", fp.file);
+        fd.append("dayNumber", String(dayNumber));
+        fd.append("caption", caption);
+        fd.append("uploadedBy", uploaderName);
+        fd.append("mediaType", fp.type);
+
+        const xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener("progress", (e) => {
+          if (e.lengthComputable) {
+            uploadedPerFile[index] = e.loaded;
+            updateProgress();
+          }
+        });
+        xhr.addEventListener("load", () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            uploadedPerFile[index] = fileSizes[index];
+            updateProgress();
+            resolve();
+          } else {
+            reject(new Error("Upload failed"));
+          }
+        });
+        xhr.addEventListener("error", () => reject(new Error("Upload failed")));
+        xhr.open("POST", "/api/upload");
+        xhr.send(fd);
+      });
+
     try {
       for (let i = 0; i < files.length; i++) {
-        const formData = new FormData();
-        formData.append("file", files[i].file);
-        formData.append("dayNumber", String(dayNumber));
-        formData.append("caption", caption);
-        formData.append("uploadedBy", uploaderName);
-        formData.append("mediaType", files[i].type);
-        const res = await fetch("/api/upload", { method: "POST", body: formData });
-        if (!res.ok) throw new Error("Upload failed");
-        setProgress(Math.round(((i + 1) / files.length) * 100));
+        await uploadOne(files[i], i);
       }
+      setProgress(100);
       setStatus("success");
       setTimeout(() => { onUploadSuccess(); resetState(); }, 1800);
     } catch {
@@ -145,7 +179,7 @@ export default function UploadModal({
                   <p className="text-gray-500 text-sm">
                     {isDragActive ? "Thả file vào đây 🔥" : "Kéo thả ảnh hoặc video vào đây"}
                   </p>
-                  <p className="text-gray-300 text-xs mt-1">hoặc nhấn để chọn file</p>
+                  <p className="text-gray-300 text-xs mt-1">hoặc nhấn để chọn nhiều file cùng lúc (tối đa 20)</p>
                 </div>
 
                 {/* File previews */}
