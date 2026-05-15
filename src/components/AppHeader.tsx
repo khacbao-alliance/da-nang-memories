@@ -113,15 +113,15 @@ export default function AppHeader({
     <header className="bg-white border-b border-rose-100/80 z-40 flex-shrink-0">
 
       {/* ── Top row: brand + (desktop) carousel + actions ── */}
-      <div className="flex items-center px-4 sm:px-6 h-12 sm:h-[72px] gap-3 sm:gap-5">
+      <div className="flex items-center px-3 sm:px-6 h-12 sm:h-[72px] gap-2 sm:gap-5">
 
         {/* Brand */}
-        <div className="flex-shrink-0 flex items-center gap-2 sm:gap-3">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center">
+        <div className="flex-shrink min-w-0 flex items-center gap-2 sm:gap-3">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center flex-shrink-0">
             <Camera size={15} className="text-rose-400" />
           </div>
-          <div className="leading-none">
-            <p className="text-[13px] sm:text-[14px] font-bold text-gray-800 tracking-tight">Da Nang Memories</p>
+          <div className="leading-none min-w-0">
+            <p className="text-[13px] sm:text-[14px] font-bold text-gray-800 tracking-tight truncate">Da Nang Memories</p>
             <p className="hidden sm:flex items-center gap-1 text-[11px] text-rose-300 font-medium mt-1">
               <MapPin size={9} />
               Chuyến đi công ty 2026
@@ -208,8 +208,8 @@ export default function AppHeader({
           )}
           <button
             onClick={onUploadClick}
-            className="flex items-center gap-1.5 bg-rose-500 text-white text-sm font-semibold
-                       px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl hover:bg-rose-600 active:scale-95 transition-all
+            className="flex items-center gap-1.5 bg-rose-500 text-white text-[13px] sm:text-sm font-semibold
+                       px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl hover:bg-rose-600 active:scale-95 transition-all
                        shadow-sm shadow-rose-200 whitespace-nowrap"
           >
             <Camera size={14} />
@@ -224,13 +224,16 @@ export default function AppHeader({
           <button
             key={day.day_number}
             onClick={() => onSelectDay(day.day_number)}
-            className={`flex-1 py-2.5 text-xs font-semibold transition-colors border-b-2 ${
+            className={`flex-1 py-2 px-1 transition-colors border-b-2 leading-tight ${
               selectedDay === day.day_number
                 ? "text-rose-600 border-rose-500 bg-rose-50/60"
                 : "text-gray-400 border-transparent"
             }`}
           >
-            Ngày {day.day_number}
+            <div className="text-[12px] font-semibold">Ngày {day.day_number}</div>
+            <div className={`text-[9px] mt-0.5 ${selectedDay === day.day_number ? "text-rose-400" : "text-gray-300"}`}>
+              {day.date}
+            </div>
           </button>
         ))}
       </div>

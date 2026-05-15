@@ -139,7 +139,7 @@ export default function UploadModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-0 sm:p-4"
           onClick={handleClose}
         >
           <motion.div
@@ -147,12 +147,12 @@ export default function UploadModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 16 }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="bg-white border border-gray-100 rounded-2xl shadow-2xl p-4 sm:p-6 w-full max-w-md max-h-[90svh] overflow-y-auto"
+            className="bg-white border border-gray-100 rounded-t-2xl sm:rounded-2xl shadow-2xl p-4 sm:p-6 w-full max-w-md max-h-[92svh] sm:max-h-[90svh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-gray-900 text-lg font-semibold">Chia sẻ kỷ niệm</h2>
+            <div className="flex items-center justify-between mb-4 sm:mb-5">
+              <h2 className="text-gray-900 text-base sm:text-lg font-semibold">Chia sẻ kỷ niệm</h2>
               <button
                 onClick={handleClose}
                 disabled={status === "uploading"}
@@ -164,27 +164,28 @@ export default function UploadModal({
 
             {/* Idle / form state */}
             {status === "idle" && (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {/* Dropzone */}
                 <div
                   {...getRootProps()}
-                  className={`border-2 border-dashed rounded-xl p-7 text-center cursor-pointer transition-all ${
+                  className={`border-2 border-dashed rounded-xl p-5 sm:p-7 text-center cursor-pointer transition-all ${
                     isDragActive
                       ? "border-indigo-400 bg-indigo-50"
                       : "border-gray-200 hover:border-indigo-300 hover:bg-gray-50"
                   }`}
                 >
                   <input {...getInputProps()} />
-                  <Upload size={28} className="mx-auto mb-2 text-gray-300" />
+                  <Upload size={24} className="mx-auto mb-2 text-gray-300 sm:hidden" />
+                  <Upload size={28} className="mx-auto mb-2 text-gray-300 hidden sm:block" />
                   <p className="text-gray-500 text-sm">
-                    {isDragActive ? "Thả file vào đây 🔥" : "Kéo thả ảnh hoặc video vào đây"}
+                    {isDragActive ? "Thả file vào đây 🔥" : "Chọn ảnh / video từ thiết bị"}
                   </p>
-                  <p className="text-gray-300 text-xs mt-1">hoặc nhấn để chọn nhiều file cùng lúc (tối đa 20)</p>
+                  <p className="text-gray-300 text-[11px] sm:text-xs mt-1">Nhấn để chọn nhiều file (tối đa 20)</p>
                 </div>
 
                 {/* File previews */}
                 {files.length > 0 && (
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-4 sm:grid-cols-4 gap-2">
                     {files.map((f, i) => (
                       <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
                         {f.type === "image" ? (

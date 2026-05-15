@@ -189,22 +189,22 @@ export default function FullscreenPreview({
           {/* Close */}
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 z-20 w-10 h-10 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-black/70 transition-colors"
+            className="absolute top-3 right-3 sm:top-5 sm:right-5 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-black/70 transition-colors"
           >
             <X size={18} />
           </button>
 
           {/* Counter */}
-          <div className="absolute top-5 left-1/2 -translate-x-1/2 z-20 bg-black/50 backdrop-blur-md border border-white/10 rounded-full px-4 py-1.5">
-            <span className="text-white/80 text-xs">{currentIndex + 1} / {total}</span>
+          <div className="absolute top-3 sm:top-5 left-1/2 -translate-x-1/2 z-20 bg-black/50 backdrop-blur-md border border-white/10 rounded-full px-3 sm:px-4 py-1 sm:py-1.5">
+            <span className="text-white/80 text-[11px] sm:text-xs">{currentIndex + 1} / {total}</span>
           </div>
 
           {/* Delete */}
-          <div className="absolute top-5 left-5 z-20">
+          <div className="absolute top-3 left-3 sm:top-5 sm:left-5 z-20">
             {!confirmDelete ? (
               <button
                 onClick={e => { e.stopPropagation(); setConfirmDelete(true); }}
-                className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/50 hover:text-red-400 hover:border-red-400/40 transition-colors"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/50 hover:text-red-400 hover:border-red-400/40 transition-colors"
               >
                 <Trash2 size={16} />
               </button>
@@ -232,7 +232,7 @@ export default function FullscreenPreview({
           {hasPrev && (
             <button
               onClick={e => { e.stopPropagation(); onPrev(); }}
-              className="absolute left-2 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-black/70 transition-colors hover:scale-110 active:scale-95"
+              className="absolute left-1.5 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-black/70 transition-colors hover:scale-110 active:scale-95"
             >
               <ChevronLeft size={20} />
             </button>
@@ -240,7 +240,7 @@ export default function FullscreenPreview({
 
           {/* Media + caption */}
           <div
-            className="relative flex flex-col items-center max-h-screen px-4 sm:px-20 py-10 sm:py-16"
+            className="relative flex flex-col items-center w-full max-h-[100svh] px-3 sm:px-20 pt-14 pb-4 sm:py-16 overflow-y-auto"
             onClick={e => e.stopPropagation()}
           >
             <motion.div
@@ -249,19 +249,20 @@ export default function FullscreenPreview({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.2 }}
+              className="flex-shrink-0"
             >
               {media.media_type === "image" ? (
                 <img
                   src={media.cloudinary_url}
                   alt={media.caption || "Memory"}
-                  className="max-h-[60vh] sm:max-h-[65vh] max-w-[92vw] sm:max-w-[80vw] object-contain rounded-xl shadow-2xl"
+                  className="max-h-[55vh] sm:max-h-[65vh] max-w-[calc(100vw-24px)] sm:max-w-[80vw] object-contain rounded-xl shadow-2xl"
                 />
               ) : (
                 <video
                   src={media.cloudinary_url}
                   controls
                   autoPlay
-                  className="max-h-[60vh] sm:max-h-[65vh] max-w-[92vw] sm:max-w-[80vw] rounded-xl shadow-2xl"
+                  className="max-h-[55vh] sm:max-h-[65vh] max-w-[calc(100vw-24px)] sm:max-w-[80vw] rounded-xl shadow-2xl"
                 />
               )}
             </motion.div>
@@ -272,7 +273,7 @@ export default function FullscreenPreview({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="mt-4 sm:mt-5 text-center max-w-lg w-full px-4 py-3 bg-black/60 backdrop-blur-sm rounded-2xl border border-white/10"
+              className="mt-3 sm:mt-5 text-center max-w-lg w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-black/60 backdrop-blur-sm rounded-2xl border border-white/10 flex-shrink-0"
             >
               {/* Caption row */}
               <div className="flex items-start justify-center gap-2 mb-2">
@@ -333,7 +334,7 @@ export default function FullscreenPreview({
           {hasNext && (
             <button
               onClick={e => { e.stopPropagation(); onNext(); }}
-              className="absolute right-2 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-black/70 transition-colors hover:scale-110 active:scale-95"
+              className="absolute right-1.5 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-black/70 transition-colors hover:scale-110 active:scale-95"
             >
               <ChevronRight size={20} />
             </button>

@@ -85,7 +85,7 @@ export default function FlipbookViewer({ media, isLoading, onOpenFullscreen, rea
 
       {/* ── Main card area ── */}
       <div
-        className="relative flex-1 flex items-center justify-center sm:gap-4 px-2 sm:px-8 overflow-hidden py-4"
+        className="relative flex-1 flex items-center justify-center sm:gap-4 px-2 sm:px-8 overflow-hidden py-2 sm:py-4"
         style={{ perspective: 1400 }}
       >
         {/* Decorative side art + plane (desktop only, behind card) */}
@@ -100,10 +100,10 @@ export default function FlipbookViewer({ media, isLoading, onOpenFullscreen, rea
           <ChevronLeft size={20} />
         </button>
 
-        {/* Card wrapper */}
+        {/* Card wrapper — width-driven on mobile, height-driven on desktop, both keep 3/4 aspect ratio */}
         <div
-          className="relative flex-shrink-0 max-w-[calc(100vw-32px)] sm:max-w-[calc(100vw-136px)]"
-          style={{ height: "min(calc(100svh - 180px), 680px)", aspectRatio: "3/4" }}
+          className="relative flex-shrink-0 w-[min(calc(100vw-24px),420px)] max-h-[calc(100svh-150px)] sm:w-auto sm:h-[min(calc(100svh-180px),680px)] sm:max-h-none sm:max-w-[calc(100vw-136px)]"
+          style={{ aspectRatio: "3/4" }}
         >
           {/* Stacked pages behind */}
           {hasNext && (
@@ -161,13 +161,13 @@ export default function FlipbookViewer({ media, isLoading, onOpenFullscreen, rea
               </div>
 
               {/* ── Info strip — 32% ── */}
-              <div className="flex flex-col justify-between px-4 pt-2.5 pb-3 bg-white" style={{ height: "32%" }}>
+              <div className="flex flex-col justify-between px-3 sm:px-4 pt-2 sm:pt-2.5 pb-2.5 sm:pb-3 bg-white" style={{ height: "32%" }}>
 
                 {/* Caption */}
                 {current.caption ? (
-                  <p className="text-gray-800 text-sm font-medium leading-snug line-clamp-2">{current.caption}</p>
+                  <p className="text-gray-800 text-[13px] sm:text-sm font-medium leading-snug line-clamp-2">{current.caption}</p>
                 ) : (
-                  <p className="text-gray-300 text-xs italic">Tap để xem và thêm caption...</p>
+                  <p className="text-gray-300 text-[11px] sm:text-xs italic">Tap để xem và thêm caption...</p>
                 )}
 
                 {/* Reactions row */}
@@ -196,14 +196,14 @@ export default function FlipbookViewer({ media, isLoading, onOpenFullscreen, rea
                 </div>
 
                 {/* Uploader + date */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 min-w-0">
                     <div className="w-5 h-5 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center flex-shrink-0">
                       <User size={10} className="text-indigo-500" />
                     </div>
-                    <span className="text-gray-500 text-xs font-medium truncate max-w-[110px]">{current.uploaded_by}</span>
+                    <span className="text-gray-500 text-[11px] sm:text-xs font-medium truncate">{current.uploaded_by}</span>
                   </div>
-                  <span className="text-gray-300 text-xs flex-shrink-0">{formatDateShort(current.created_at)}</span>
+                  <span className="text-gray-300 text-[11px] sm:text-xs flex-shrink-0">{formatDateShort(current.created_at)}</span>
                 </div>
               </div>
             </motion.div>

@@ -112,14 +112,15 @@ export default function EmojiReactions({ mediaId, onReact }: Props) {
           <Plus size={14} />
         </button>
         {showPicker && (
-          <div className="absolute bottom-10 left-0 z-50 scale-90 origin-bottom-left">
+          <div className="fixed sm:absolute inset-x-2 bottom-2 sm:inset-auto sm:bottom-10 sm:left-0 z-50 flex justify-center sm:block sm:scale-90 sm:origin-bottom-left">
             <EmojiPicker
               onEmojiClick={handleEmojiClick}
               theme={Theme.DARK}
-              height={350}
-              width={300}
+              height={320}
+              width="100%"
               skinTonesDisabled
               previewConfig={{ showPreview: false }}
+              style={{ maxWidth: 320 }}
             />
           </div>
         )}
