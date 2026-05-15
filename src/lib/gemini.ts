@@ -1,5 +1,12 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+const FALLBACK_SUMMARIES = [
+  "Ngày 1: Cả team đặt chân xuống Đà Nẵng với năng lượng dồi dào và cơn háo hức chưa biết đang chờ gì phía trước 🛬✨",
+  "Ngày 2: Cầu Vàng check-in xong, biển gọi tên — peak chaos chính thức bắt đầu từ đây 🌉🌊",
+  "Ngày 3: Hội An huyền ảo với đèn lồng, bánh mì, và không ai còn nhớ lịch trình nữa 🏮😂",
+  "Ngày 4: Chia tay Đà Nẵng với bụng no căng, da rám nắng, và tim đầy kỷ niệm 🌅💛",
+];
+
 const FALLBACK_CAPTIONS = [
   "Beach mode activated 🌊",
   "Survived another team-building challenge 😭",
@@ -19,6 +26,23 @@ const FALLBACK_CAPTIONS = [
 
 export function isGeminiConfigured(): boolean {
   return !!process.env.GOOGLE_AI_API_KEY;
+}
+
+export async function generateDailySummary(dayNumber: number, mediaCount: number): Promise<string> {
+  const fallback = FALLBACK_SUMMARIES[(dayNumber - 1) % FALLBACK_SUMMARIES.length];
+  if (!isGeminiConfigured()) return fallback;
+
+  try {
+    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!);
+    const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite" });
+
+    const prompt = `Viết 1-2 câu tóm tắt ngắn, hài hước và ấm áp cho Ngày ${dayNumber} của chuyến công tác Đà Nẵng 4 ngày 3 đêm. Hôm nay có ${mediaCount} kỷ niệm được chia sẻ. Tone nhẹ nhàng, vui vẻ, dùng 1-2 emoji. Chỉ trả về câu tóm tắt, không giải thích.`;
+
+    const result = await model.generateContent(prompt);
+    return result.response.text().trim();
+  } catch {
+    return fallback;
+  }
 }
 
 export async function generateCaption(dayNumber: number): Promise<string> {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import { Camera, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { MemoryDay } from "@/types";
 
@@ -43,12 +43,15 @@ export default function AppHeader({
     });
   }, []);
 
+  // Set initial scroll position before browser paints to avoid visible jump
+  useLayoutEffect(() => {
+    scrollTo(selectedDay, false);
+    mounted.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-      scrollTo(selectedDay, false);
-      return;
-    }
+    if (!mounted.current) return;
     if (skipSync.current) {
       skipSync.current = false;
       return;

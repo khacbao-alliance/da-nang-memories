@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import AppHeader from "@/components/AppHeader";
@@ -14,6 +14,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [fullscreenIndex, setFullscreenIndex] = useState<number | null>(null);
+  const [reactionRefreshKey, setReactionRefreshKey] = useState(0);
 
   const fetchMedia = useCallback(async (day: number) => {
     setIsLoading(true);
@@ -41,6 +42,23 @@ export default function Home() {
   const handlePrev = () => setFullscreenIndex((i) => (i !== null && i > 0 ? i - 1 : i));
   const handleNext = () => setFullscreenIndex((i) => (i !== null && i < media.length - 1 ? i + 1 : i));
 
+  const handleDelete = (mediaId: string) => {
+    setMedia((prev) => {
+      const updated = prev.filter((m) => m.id !== mediaId);
+      // Adjust fullscreen index after deletion
+      setFullscreenIndex((i) => {
+        if (i === null) return null;
+        if (updated.length === 0) return null;
+        return Math.min(i, updated.length - 1);
+      });
+      return updated;
+    });
+  };
+
+  const handleEditCaption = (mediaId: string, caption: string) => {
+    setMedia((prev) => prev.map((m) => (m.id === mediaId ? { ...m, caption } : m)));
+  };
+
   return (
     <div className="h-screen overflow-hidden flex flex-col bg-[#f5f7fa]">
 
@@ -60,6 +78,7 @@ export default function Home() {
           media={media}
           isLoading={isLoading}
           onOpenFullscreen={(idx) => setFullscreenIndex(idx)}
+          reactionRefreshKey={reactionRefreshKey}
         />
       </main>
 
@@ -73,6 +92,9 @@ export default function Home() {
         hasNext={fullscreenIndex !== null && fullscreenIndex < media.length - 1}
         currentIndex={fullscreenIndex ?? 0}
         total={media.length}
+        onDelete={handleDelete}
+        onEditCaption={handleEditCaption}
+        onReactionAdded={() => setReactionRefreshKey(k => k + 1)}
       />
 
       <UploadModal

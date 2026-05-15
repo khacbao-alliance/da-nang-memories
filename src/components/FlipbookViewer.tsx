@@ -2,43 +2,29 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Maximize2, Camera, User } from "lucide-react";
-import { Media } from "@/types";
+import { ChevronLeft, ChevronRight, Maximize2, Camera, User, Smile } from "lucide-react";
+import { Media, Reaction } from "@/types";
 import { formatDateShort } from "@/lib/utils";
+import { groupReactions } from "@/components/EmojiReactions";
 
 interface Props {
   media: Media[];
   isLoading: boolean;
   onOpenFullscreen: (index: number) => void;
+  reactionRefreshKey?: number;
 }
 
 const PAGE_VARIANTS = {
-  enter: (dir: number) => ({
-    opacity: 0,
-    x: dir > 0 ? 80 : -80,
-    rotateY: dir > 0 ? 14 : -14,
-    scale: 0.94,
-  }),
-  center: {
-    opacity: 1,
-    x: 0,
-    rotateY: 0,
-    scale: 1,
-  },
-  exit: (dir: number) => ({
-    opacity: 0,
-    x: dir > 0 ? -80 : 80,
-    rotateY: dir > 0 ? -14 : 14,
-    scale: 0.94,
-  }),
+  enter: (dir: number) => ({ opacity: 0, x: dir > 0 ? 80 : -80, rotateY: dir > 0 ? 14 : -14, scale: 0.94 }),
+  center: { opacity: 1, x: 0, rotateY: 0, scale: 1 },
+  exit: (dir: number) => ({ opacity: 0, x: dir > 0 ? -80 : 80, rotateY: dir > 0 ? -14 : 14, scale: 0.94 }),
 };
 
-export default function FlipbookViewer({ media, isLoading, onOpenFullscreen }: Props) {
+export default function FlipbookViewer({ media, isLoading, onOpenFullscreen, reactionRefreshKey }: Props) {
   const [[pageIdx, dir], setPage] = useState([0, 0]);
+  const [cardReactions, setCardReactions] = useState<{ emoji: string; count: number }[]>([]);
 
-  useEffect(() => {
-    setPage([0, 0]);
-  }, [media]);
+  useEffect(() => { setPage([0, 0]); }, [media]);
 
   const paginate = useCallback(
     (newDir: number) => {
@@ -61,6 +47,16 @@ export default function FlipbookViewer({ media, isLoading, onOpenFullscreen }: P
   }, [paginate]);
 
   const current = media[pageIdx];
+
+  // Fetch reactions for current card — also re-fetches when reactionRefreshKey changes
+  useEffect(() => {
+    if (!current?.id) { setCardReactions([]); return; }
+    fetch(`/api/reactions?mediaId=${current.id}`)
+      .then(r => r.ok ? r.json() : [])
+      .then((data: Reaction[]) => setCardReactions(groupReactions(data)))
+      .catch(() => setCardReactions([]));
+  }, [current?.id, reactionRefreshKey]);
+
   const hasPrev = pageIdx > 0;
   const hasNext = pageIdx < media.length - 1;
   const dotMedia = media.slice(0, 12);
@@ -103,23 +99,14 @@ export default function FlipbookViewer({ media, isLoading, onOpenFullscreen }: P
         {/* Card wrapper */}
         <div
           className="relative flex-shrink-0 max-w-[calc(100vw-32px)] sm:max-w-[calc(100vw-136px)]"
-          style={{
-            height: "min(calc(100svh - 180px), 680px)",
-            aspectRatio: "3/4",
-          }}
+          style={{ height: "min(calc(100svh - 180px), 680px)", aspectRatio: "3/4" }}
         >
           {/* Stacked pages behind */}
           {hasNext && (
-            <div
-              className="absolute inset-0 rounded-2xl bg-gray-100 pointer-events-none"
-              style={{ transform: "translate(6px,6px)", zIndex: 0 }}
-            />
+            <div className="absolute inset-0 rounded-2xl bg-gray-100 pointer-events-none" style={{ transform: "translate(6px,6px)", zIndex: 0 }} />
           )}
           {pageIdx < media.length - 2 && (
-            <div
-              className="absolute inset-0 rounded-2xl bg-gray-50 border border-gray-100 pointer-events-none"
-              style={{ transform: "translate(11px,11px)", zIndex: -1 }}
-            />
+            <div className="absolute inset-0 rounded-2xl bg-gray-50 border border-gray-100 pointer-events-none" style={{ transform: "translate(11px,11px)", zIndex: -1 }} />
           )}
 
           {/* Animated card */}
@@ -141,14 +128,13 @@ export default function FlipbookViewer({ media, isLoading, onOpenFullscreen }: P
               }}
               className="absolute inset-0 bg-white rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing z-10"
               style={{
-                boxShadow:
-                  "0 24px 64px -12px rgba(0,0,0,0.18), 0 8px 24px -8px rgba(0,0,0,0.10)",
+                boxShadow: "0 24px 64px -12px rgba(0,0,0,0.18), 0 8px 24px -8px rgba(0,0,0,0.10)",
                 transformStyle: "preserve-3d",
               }}
               onClick={() => onOpenFullscreen(pageIdx)}
             >
-              {/* ── Photo / video ── */}
-              <div className="relative overflow-hidden" style={{ height: "74%" }}>
+              {/* ── Photo / video — 68% ── */}
+              <div className="relative overflow-hidden" style={{ height: "68%" }}>
                 {current.media_type === "image" ? (
                   <img
                     src={current.cloudinary_url}
@@ -157,14 +143,7 @@ export default function FlipbookViewer({ media, isLoading, onOpenFullscreen }: P
                     draggable={false}
                   />
                 ) : (
-                  <video
-                    src={current.cloudinary_url}
-                    className="w-full h-full object-cover"
-                    muted
-                    loop
-                    autoPlay
-                    playsInline
-                  />
+                  <video src={current.cloudinary_url} className="w-full h-full object-cover" muted loop autoPlay playsInline />
                 )}
 
                 <div className="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-black/12 to-transparent pointer-events-none" />
@@ -172,42 +151,61 @@ export default function FlipbookViewer({ media, isLoading, onOpenFullscreen }: P
                 <div className="absolute top-3 right-3 bg-white/88 backdrop-blur-sm rounded-full px-2.5 py-1 text-xs font-semibold text-gray-600 shadow-sm">
                   {pageIdx + 1} / {media.length}
                 </div>
-
                 <div className="absolute top-3 left-3 bg-white/88 backdrop-blur-sm rounded-full p-1.5 shadow-sm">
                   <Maximize2 size={11} className="text-gray-500" />
                 </div>
               </div>
 
-              {/* ── Info strip ── */}
-              <div
-                className="flex flex-col justify-between px-4 py-3 bg-white"
-                style={{ height: "26%" }}
-              >
+              {/* ── Info strip — 32% ── */}
+              <div className="flex flex-col justify-between px-4 pt-2.5 pb-3 bg-white" style={{ height: "32%" }}>
+
+                {/* Caption */}
                 {current.caption ? (
-                  <p className="text-gray-800 text-sm font-medium leading-snug line-clamp-2">
-                    {current.caption}
-                  </p>
+                  <p className="text-gray-800 text-sm font-medium leading-snug line-clamp-2">{current.caption}</p>
                 ) : (
-                  <div />
+                  <p className="text-gray-300 text-xs italic">Tap để xem và thêm caption...</p>
                 )}
+
+                {/* Reactions row */}
+                <div className="flex items-center gap-1 min-h-[22px]">
+                  {cardReactions.length > 0 ? (
+                    <>
+                      {cardReactions.slice(0, 5).map(({ emoji, count }) => (
+                        <span
+                          key={emoji}
+                          className="flex items-center gap-0.5 bg-gray-50 border border-gray-100 rounded-full px-1.5 py-0.5 text-xs text-gray-600"
+                        >
+                          <span className="text-sm leading-none">{emoji}</span>
+                          <span className="font-medium">{count}</span>
+                        </span>
+                      ))}
+                      {cardReactions.length > 5 && (
+                        <span className="text-gray-300 text-xs">+{cardReactions.length - 5}</span>
+                      )}
+                    </>
+                  ) : (
+                    <span className="flex items-center gap-1 text-gray-300 text-xs">
+                      <Smile size={12} />
+                      Tap để react
+                    </span>
+                  )}
+                </div>
+
+                {/* Uploader + date */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <div className="w-5 h-5 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center flex-shrink-0">
                       <User size={10} className="text-indigo-500" />
                     </div>
-                    <span className="text-gray-500 text-xs font-medium truncate max-w-[110px]">
-                      {current.uploaded_by}
-                    </span>
+                    <span className="text-gray-500 text-xs font-medium truncate max-w-[110px]">{current.uploaded_by}</span>
                   </div>
-                  <span className="text-gray-300 text-xs flex-shrink-0">
-                    {formatDateShort(current.created_at)}
-                  </span>
+                  <span className="text-gray-300 text-xs flex-shrink-0">{formatDateShort(current.created_at)}</span>
                 </div>
               </div>
             </motion.div>
           </AnimatePresence>
 
-          {/* Mobile overlay nav arrows */}
+          {/* Mobile overlay nav */}
           {hasPrev && (
             <button
               onClick={() => paginate(-1)}
@@ -243,9 +241,7 @@ export default function FlipbookViewer({ media, isLoading, onOpenFullscreen }: P
             key={i}
             onClick={() => setPage([i, i > pageIdx ? 1 : -1])}
             className={`rounded-full transition-all duration-200 ${
-              i === pageIdx
-                ? "w-5 h-1.5 bg-indigo-600"
-                : "w-1.5 h-1.5 bg-gray-300 hover:bg-gray-400"
+              i === pageIdx ? "w-5 h-1.5 bg-indigo-600" : "w-1.5 h-1.5 bg-gray-300 hover:bg-gray-400"
             }`}
           />
         ))}
