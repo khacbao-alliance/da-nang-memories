@@ -44,7 +44,13 @@ export default function FullscreenPreview({
   const [isDeleting, setIsDeleting] = useState(false);
   const [floats, setFloats] = useState<FloatItem[]>([]);
   const floatIdRef = useRef(0);
+  const floatTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const editInputRef = useRef<HTMLInputElement>(null);
+
+  const clearPendingFloats = useCallback(() => {
+    floatTimeoutsRef.current.forEach(t => clearTimeout(t));
+    floatTimeoutsRef.current = [];
+  }, []);
 
   const spawnFloats = useCallback((emojis: string[], stagger = 0) => {
     const items: FloatItem[] = emojis.map(emoji => ({
@@ -59,7 +65,11 @@ export default function FullscreenPreview({
 
     if (stagger > 0) {
       items.forEach((item, i) => {
-        setTimeout(() => setFloats(prev => [...prev, item]), i * stagger);
+        const t = setTimeout(() => {
+          setFloats(prev => [...prev, item]);
+          floatTimeoutsRef.current = floatTimeoutsRef.current.filter(x => x !== t);
+        }, i * stagger);
+        floatTimeoutsRef.current.push(t);
       });
     } else {
       setFloats(prev => [...prev, ...items]);
@@ -72,21 +82,32 @@ export default function FullscreenPreview({
 
   // Spawn floats when a new photo opens
   useEffect(() => {
-    if (!isOpen || !media) return;
+    if (!isOpen || !media) {
+      clearPendingFloats();
+      setFloats([]);
+      return;
+    }
+    clearPendingFloats();
     setFloats([]);
     setEditMode(false);
     setConfirmDelete(false);
     setEditValue("");
 
+    let cancelled = false;
     fetch(`/api/reactions?mediaId=${media.id}`)
       .then(r => r.ok ? r.json() : [])
       .then((reactions: Reaction[]) => {
-        if (!reactions.length) return;
+        if (cancelled || !reactions.length) return;
         const emojis = reactions.slice(0, 24).map(r => r.emoji);
         spawnFloats(emojis, 120);
       })
       .catch(() => {});
-  }, [isOpen, media?.id, spawnFloats]);
+
+    return () => {
+      cancelled = true;
+      clearPendingFloats();
+    };
+  }, [isOpen, media?.id, spawnFloats, clearPendingFloats]);
 
   useEffect(() => {
     if (editMode && editInputRef.current) editInputRef.current.focus();
