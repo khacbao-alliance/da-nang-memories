@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, Maximize2, Camera, User, Smile } from "lucid
 import { Media, Reaction } from "@/types";
 import { formatDateShort } from "@/lib/utils";
 import { groupReactions } from "@/components/EmojiReactions";
+import FlipbookDecorations from "@/components/FlipbookDecorations";
 
 interface Props {
   media: Media[];
@@ -84,14 +85,17 @@ export default function FlipbookViewer({ media, isLoading, onOpenFullscreen, rea
 
       {/* ── Main card area ── */}
       <div
-        className="flex-1 flex items-center justify-center sm:gap-4 px-2 sm:px-8 overflow-hidden py-4"
+        className="relative flex-1 flex items-center justify-center sm:gap-4 px-2 sm:px-8 overflow-hidden py-4"
         style={{ perspective: 1400 }}
       >
+        {/* Decorative side art + plane (desktop only, behind card) */}
+        <FlipbookDecorations />
+
         {/* Prev button — desktop only */}
         <button
           onClick={() => paginate(-1)}
           disabled={!hasPrev}
-          className="hidden sm:flex flex-shrink-0 w-11 h-11 rounded-full bg-white border border-gray-200 shadow-md items-center justify-center text-gray-400 hover:text-gray-800 hover:shadow-lg hover:scale-105 disabled:opacity-20 transition-all duration-200"
+          className="hidden sm:flex relative z-10 flex-shrink-0 w-11 h-11 rounded-full bg-white border border-gray-200 shadow-md items-center justify-center text-gray-400 hover:text-gray-800 hover:shadow-lg hover:scale-105 disabled:opacity-20 transition-all duration-200"
         >
           <ChevronLeft size={20} />
         </button>
@@ -228,7 +232,7 @@ export default function FlipbookViewer({ media, isLoading, onOpenFullscreen, rea
         <button
           onClick={() => paginate(1)}
           disabled={!hasNext}
-          className="hidden sm:flex flex-shrink-0 w-11 h-11 rounded-full bg-white border border-gray-200 shadow-md items-center justify-center text-gray-400 hover:text-gray-800 hover:shadow-lg hover:scale-105 disabled:opacity-20 transition-all duration-200"
+          className="hidden sm:flex relative z-10 flex-shrink-0 w-11 h-11 rounded-full bg-white border border-gray-200 shadow-md items-center justify-center text-gray-400 hover:text-gray-800 hover:shadow-lg hover:scale-105 disabled:opacity-20 transition-all duration-200"
         >
           <ChevronRight size={20} />
         </button>

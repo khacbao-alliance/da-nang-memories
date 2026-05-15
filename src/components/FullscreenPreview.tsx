@@ -11,6 +11,8 @@ interface FloatItem {
   id: number;
   emoji: string;
   x: number;
+  driftX: number;
+  rotate: number;
   scale: number;
   duration: number;
 }
@@ -45,12 +47,14 @@ export default function FullscreenPreview({
   const editInputRef = useRef<HTMLInputElement>(null);
 
   const spawnFloats = useCallback((emojis: string[], stagger = 0) => {
-    const items: FloatItem[] = emojis.map((emoji, i) => ({
+    const items: FloatItem[] = emojis.map(emoji => ({
       id: floatIdRef.current++,
       emoji,
-      x: (Math.random() - 0.5) * 260,
-      scale: 0.9 + Math.random() * 0.8,
-      duration: 1.6 + Math.random() * 0.8,
+      x: (Math.random() - 0.5) * 360,
+      driftX: (Math.random() - 0.5) * 100,
+      rotate: (Math.random() - 0.5) * 60,
+      scale: 1.1 + Math.random() * 0.8,
+      duration: 2.6 + Math.random() * 1.2,
     }));
 
     if (stagger > 0) {
@@ -147,19 +151,34 @@ export default function FullscreenPreview({
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/96 backdrop-blur-2xl overflow-hidden"
           onClick={() => { if (!editMode && !confirmDelete) onClose(); }}
         >
-          {/* ── Floating emoji particles ── */}
-          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          {/* ── Floating emoji particles — fly fully outside the image ── */}
+          <div className="pointer-events-none fixed inset-0 z-[55] overflow-hidden">
             <AnimatePresence>
               {floats.map(item => (
                 <motion.div
                   key={item.id}
-                  initial={{ opacity: 1, y: 0, x: item.x, scale: item.scale }}
-                  animate={{ opacity: 0, y: -320, x: item.x + (Math.random() - 0.5) * 60 }}
+                  initial={{ opacity: 0, y: 0, x: item.x, scale: 0.3, rotate: 0 }}
+                  animate={{
+                    opacity: [0, 1, 1, 0],
+                    y: "-110vh",
+                    x: item.x + item.driftX,
+                    scale: [0.3, item.scale, item.scale * 0.85],
+                    rotate: item.rotate,
+                  }}
                   exit={{}}
-                  transition={{ duration: item.duration, ease: "easeOut" }}
+                  transition={{
+                    duration: item.duration,
+                    ease: [0.2, 0.55, 0.25, 1],
+                    opacity: { duration: item.duration, times: [0, 0.08, 0.78, 1] },
+                    scale: { duration: item.duration, times: [0, 0.22, 1], ease: "backOut" },
+                  }}
                   onAnimationComplete={() => removeFloat(item.id)}
-                  className="absolute bottom-32 left-1/2 text-3xl select-none"
-                  style={{ translateX: "-50%" }}
+                  className="absolute bottom-20 left-1/2 text-4xl sm:text-5xl select-none"
+                  style={{
+                    translateX: "-50%",
+                    filter: "drop-shadow(0 6px 18px rgba(255,255,255,0.22)) drop-shadow(0 2px 6px rgba(0,0,0,0.4))",
+                    willChange: "transform, opacity",
+                  }}
                 >
                   {item.emoji}
                 </motion.div>
@@ -304,7 +323,7 @@ export default function FullscreenPreview({
               <div className="relative">
                 <EmojiReactions
                   mediaId={media.id}
-                  onReact={emoji => { spawnFloats([emoji]); onReactionAdded?.(); }}
+                  onReact={emoji => { spawnFloats([emoji, emoji, emoji, emoji], 80); onReactionAdded?.(); }}
                 />
               </div>
             </motion.div>
